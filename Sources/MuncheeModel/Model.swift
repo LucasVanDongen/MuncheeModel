@@ -12,7 +12,7 @@ import Combine
     public private(set) var user: User?
     public private(set) var selectedRestaurant: Restaurant? {
         didSet(previousRestaurant) {
-            updateOrder(
+            replaceOrder(
                 whenPreviousRestaurant: previousRestaurant,
                 wasNotTheSameAs: selectedRestaurant
             )
@@ -28,7 +28,7 @@ import Combine
         selectedRestaurant = restaurant
     }
 
-    func updateOrder(
+    func replaceOrder(
         whenPreviousRestaurant previousRestaurant: Restaurant?,
         wasNotTheSameAs newRestaurant: Restaurant?
     ) {

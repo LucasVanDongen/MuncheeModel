@@ -19,7 +19,7 @@ public struct OrderLine: Equatable {
         self.amount = amount
     }
 
-    mutating func update(amount: Int) {
+    mutating public func update(amount: Int) {
         self.amount = amount
     }
 

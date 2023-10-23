@@ -103,7 +103,7 @@ public enum AddressState {
     }
 
     @discardableResult
-    func delete(product: Product) -> Bool {
+    public func delete(product: Product) -> Bool {
         guard canEditOrder else {
             logger.log(error: "Cannot delete orderline when order is not open")
             return false
