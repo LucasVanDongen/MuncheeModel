@@ -14,7 +14,7 @@ public struct Address {
     public let zipCode: String
     public let country: String
 
-    internal init(
+    public init(
         street: String,
         number: String,
         city: String,
