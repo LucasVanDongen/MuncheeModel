@@ -22,6 +22,8 @@ import Combine
 
     private var cancelBag = Set<AnyCancellable>()
 
+    public init() { }
+
     public func select(restaurant: Restaurant) {
         selectedRestaurant = restaurant
     }

@@ -42,7 +42,7 @@ public enum AddressState {
 
     private var cancelBag = Set<AnyCancellable>()
 
-    init(restaurant: Restaurant) {
+    public init(restaurant: Restaurant) {
         self.restaurant = restaurant
     }
 
