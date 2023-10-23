@@ -5,7 +5,7 @@
 //  Created by Lucas van Dongen on 16/10/2023.
 //
 
-import Cocoa
+import Foundation
 import Combine
 
 public let state = State()

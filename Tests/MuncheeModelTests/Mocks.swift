@@ -8,6 +8,7 @@
 import Foundation
 
 @testable import MuncheeModel
+import CoreLocation
 
 class Mocks {
     static let address1 = Address(
@@ -27,7 +28,8 @@ class Mocks {
     static let sandwichRestaurant = Restaurant(
         id: "1",
         name: "The Sandwich Lord",
-        address: address1,
+        address: address1, 
+        location: CLLocation(latitude: 0, longitude: 0),
         products: [hamSandwich, cheeseSandwich],
         minimumValueForDelivery: 12.5
     )
@@ -45,6 +47,7 @@ class Mocks {
         id: "2",
         name: "Dan's Deep Pan Pizza Parlor",
         address: address1,
+        location: CLLocation(latitude: 0, longitude: 0),
         products: [pizzaPepperoni, pizzaEggplant],
         minimumValueForDelivery: 12.5
     )

@@ -5,7 +5,7 @@
 //  Created by Lucas van Dongen on 16/10/2023.
 //
 
-import Cocoa
+import Foundation
 
 public class OrderLine: Equatable {
     public let product: Product
