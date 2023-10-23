@@ -8,7 +8,7 @@
 import CoreLocation
 import Foundation
 
-public class Delivery {
+@Observable public class Delivery {
     public enum State {
         case waiting
         case cancelled(reason: String)
@@ -18,8 +18,8 @@ public class Delivery {
 
     public let order: Order
 
-    @Published public private(set) var state: State = .waiting
-    @Published public private(set) var estimatedDeliveryTime: Date
+    public private(set) var state: State = .waiting
+    public private(set) var estimatedDeliveryTime: Date
 
     var isEditable: Bool {
         switch state {

@@ -22,11 +22,15 @@ public enum AddressState {
     case confirmed(address: Address)
 }
 
-public class Order {
-    @Published public private(set) var state: OrderState = .open
-    @Published public private(set) var lines = [OrderLine]()
-    @Published public private(set) var minimumOrderMet = false
-    @Published public private(set) var address: AddressState = .none
+@Observable public class Order {
+    public private(set) var state: OrderState = .open
+    public private(set) var lines = [OrderLine]() {
+        didSet {
+            updateTotal()
+        }
+    }
+    public private(set) var minimumOrderMet = false
+    public private(set) var address: AddressState = .none
 
     public let restaurant: Restaurant
 
@@ -40,8 +44,6 @@ public class Order {
 
     init(restaurant: Restaurant) {
         self.restaurant = restaurant
-
-        startObservingOrderLines()
     }
 
     @discardableResult
@@ -59,14 +61,14 @@ public class Order {
             return false
         }
 
-        let existingLine = lines.first(where: {
+        let existingLineIndex = lines.firstIndex(where: {
             $0.product.id == product.id
         })
 
-        switch existingLine {
-        case let .some(existingLine):
-            let newTotal = existingLine.amount + amount
-            existingLine.update(amount: newTotal)
+        switch existingLineIndex {
+        case let .some(existingLineIndex):
+            let newTotal = lines[existingLineIndex].amount + amount
+            lines[existingLineIndex].update(amount: newTotal)
         case .none:
             let newLine = OrderLine(
                 product: product,
@@ -88,14 +90,14 @@ public class Order {
             return false
         }
 
-        guard let orderLine = lines.first(where: {
+        guard let orderLineIndex = lines.firstIndex(where: {
             $0.product.id == product.id
         }) else {
             logger.log(error: "Orderline for product \(product.name) with id \(product.id) does not exist")
             return false
         }
 
-        orderLine.update(amount: newAmount)
+        lines[orderLineIndex].update(amount: newAmount)
 
         return true
     }
@@ -141,10 +143,8 @@ public class Order {
         return true
     }
 
-    private func startObservingOrderLines() {
-        $lines.sink { [unowned self] updatedLines in
-            let sumOfOrder = updatedLines.map { Decimal($0.amount) * $0.product.price }.reduce(0, +)
-            self.minimumOrderMet = sumOfOrder >= restaurant.minimumValueForDelivery
-        }.store(in: &cancelBag)
+    func updateTotal() {
+        let sumOfOrder = lines.map { Decimal($0.amount) * $0.product.price }.reduce(0, +)
+        minimumOrderMet = sumOfOrder >= restaurant.minimumValueForDelivery
     }
 }

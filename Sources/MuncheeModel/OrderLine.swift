@@ -7,19 +7,11 @@
 
 import Foundation
 
-public class OrderLine: Equatable {
+public struct OrderLine: Equatable {
     public let product: Product
     public private(set) var amount: Int
 
-    init(
-        product: Product,
-        amount: Int
-    ) {
-        self.product = product
-        self.amount = amount
-    }
-
-    func update(amount: Int) {
+    mutating func update(amount: Int) {
         self.amount = amount
     }
 
