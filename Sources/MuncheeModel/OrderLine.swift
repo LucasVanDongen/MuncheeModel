@@ -11,6 +11,14 @@ public struct OrderLine: Equatable {
     public let product: Product
     public private(set) var amount: Int
 
+    public init(
+        product: Product,
+        amount: Int
+    ) {
+        self.product = product
+        self.amount = amount
+    }
+
     mutating func update(amount: Int) {
         self.amount = amount
     }

@@ -11,4 +11,14 @@ public struct Product: Equatable {
     public let id: String
     public let name: String
     public let price: Decimal
+
+    public init(
+        id: String,
+        name: String,
+        price: Decimal
+    ) {
+        self.id = id
+        self.name = name
+        self.price = price
+    }
 }

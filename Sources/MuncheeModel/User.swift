@@ -9,4 +9,8 @@ import Foundation
 
 public struct User {
     public let address: Address
+
+    public init(address: Address) {
+        self.address = address
+    }
 }

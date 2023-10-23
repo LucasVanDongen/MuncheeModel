@@ -14,6 +14,22 @@ public struct Restaurant {
     public let location: CLLocation
     public let products: [Product]
     public let minimumValueForDelivery: Decimal
+
+    public init(
+        id: String,
+        name: String,
+        address: Address,
+        location: CLLocation,
+        products: [Product],
+        minimumValueForDelivery: Decimal
+    ) {
+        self.id = id
+        self.name = name
+        self.address = address
+        self.location = location
+        self.products = products
+        self.minimumValueForDelivery = minimumValueForDelivery
+    }
 }
 
 extension Restaurant: Equatable {

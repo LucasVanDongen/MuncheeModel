@@ -13,6 +13,20 @@ public struct Address {
     public let city: String
     public let zipCode: String
     public let country: String
+
+    internal init(
+        street: String,
+        number: String,
+        city: String,
+        zipCode: String,
+        country: String
+    ) {
+        self.street = street
+        self.number = number
+        self.city = city
+        self.zipCode = zipCode
+        self.country = country
+    }
 }
 
 extension Address: Equatable {
