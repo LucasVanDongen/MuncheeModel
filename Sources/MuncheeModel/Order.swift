@@ -24,13 +24,14 @@ public enum AddressState {
 
 @Observable public class Order {
     public private(set) var state: OrderState = .open
-    public private(set) var lines = [OrderLine]() {
-        didSet {
-            updateTotal()
-        }
-    }
-    public private(set) var minimumOrderMet = false
+    public private(set) var lines = [OrderLine]()
     public private(set) var address: AddressState = .none
+    public var total: Decimal {
+        lines.map(\.total).reduce(0, +)
+    }
+    public var minimumOrderMet: Bool {
+        total >= restaurant.minimumValueForDelivery
+    }
 
     public let restaurant: Restaurant
 
@@ -141,10 +142,5 @@ public enum AddressState {
         state = .paying
 
         return true
-    }
-
-    func updateTotal() {
-        let sumOfOrder = lines.map { Decimal($0.amount) * $0.product.price }.reduce(0, +)
-        minimumOrderMet = sumOfOrder >= restaurant.minimumValueForDelivery
     }
 }

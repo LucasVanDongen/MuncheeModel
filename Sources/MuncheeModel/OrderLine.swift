@@ -7,9 +7,14 @@
 
 import Foundation
 
-public struct OrderLine: Equatable {
+@Observable
+public class OrderLine: Equatable {
     public let product: Product
     public private(set) var amount: Int
+
+    public var total: Decimal {
+        Decimal(amount) * product.price
+    }
 
     public init(
         product: Product,
@@ -19,7 +24,7 @@ public struct OrderLine: Equatable {
         self.amount = amount
     }
 
-    mutating public func update(amount: Int) {
+    public func update(amount: Int) {
         self.amount = amount
     }
 
