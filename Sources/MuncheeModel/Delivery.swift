@@ -8,8 +8,10 @@
 import CoreLocation
 import Foundation
 
-@Observable public class Delivery {
-    public enum State {
+@Observable
+@StateActor
+final public class Delivery {
+    public enum State: Equatable {
         case waiting
         case cancelled(reason: String)
         case underway(location: CLLocation)
@@ -21,36 +23,60 @@ import Foundation
     public private(set) var state: State = .waiting
     public private(set) var estimatedDeliveryTime: Date
 
-    var isEditable: Bool {
-        switch state {
-        case .underway, .waiting:
-            return true
-        case .delivered, .cancelled:
-            return false
-        }
-    }
-
-    public init(
+    public init?(
         order: Order,
         estimatedDeliveryTime: Date
     ) {
+        guard order.state == .paid else {
+            return nil
+        }
+
         self.order = order
         self.estimatedDeliveryTime = estimatedDeliveryTime
     }
 
-    public func cancel(reason: String) {
+    @discardableResult
+    public func cancel(reason: String) -> Bool {
+        if case .delivered = state {
+            return false
+        }
+
         state = .cancelled(reason: reason)
+        return true
     }
 
-    public func startDelivery() {
+    @discardableResult
+    public func startDelivery() -> Bool {
+        guard case .waiting = state else {
+            return false
+        }
+
         state = .underway(location: order.restaurant.location)
+        return true
     }
 
-    public func update(location: CLLocation) {
+    @discardableResult
+    public func updateCourier(
+        location: CLLocation,
+        estimatedDeliveryTime: Date
+    ) -> Bool {
+        guard case .underway = state else {
+            return false
+        }
+
         state = .underway(location: location)
+        self.estimatedDeliveryTime = estimatedDeliveryTime
+
+        return true
     }
 
-    public func update(estimatedDeliveryTime: Date) {
-        self.estimatedDeliveryTime = estimatedDeliveryTime
+    @discardableResult
+    public func delivered() -> Bool {
+        guard case .underway = state else {
+            return false
+        }
+
+        state = .delivered
+        return true
     }
 }

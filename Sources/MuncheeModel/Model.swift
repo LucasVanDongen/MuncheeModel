@@ -8,8 +8,9 @@
 import Foundation
 import Combine
 
-@Observable public class Model {
-    public private(set) var user: User?
+@Observable
+@StateActor
+final public class Model {
     public private(set) var selectedRestaurant: Restaurant? {
         didSet(previousRestaurant) {
             replaceOrder(
@@ -28,17 +29,22 @@ import Combine
         selectedRestaurant = restaurant
     }
 
+    @discardableResult
     func replaceOrder(
         whenPreviousRestaurant previousRestaurant: Restaurant?,
         wasNotTheSameAs newRestaurant: Restaurant?
-    ) {
-        if newRestaurant != previousRestaurant {
-            switch newRestaurant {
-            case let .some(restaurant):
-                self.order = Order(restaurant: restaurant)
-            case .none:
-                self.order = nil
-            }
+    ) -> Bool {
+        guard newRestaurant != previousRestaurant else {
+            return false
         }
+
+        switch newRestaurant {
+        case let .some(restaurant):
+            self.order = Order(restaurant: restaurant)
+        case .none:
+            self.order = nil
+        }
+
+        return true
     }
 }

@@ -8,7 +8,8 @@
 import Foundation
 
 @Observable
-public class OrderLine: Equatable {
+@StateActor
+final public class OrderLine: Equatable {
     public let product: Product
     public private(set) var amount: Int
 

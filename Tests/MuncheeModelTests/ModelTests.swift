@@ -9,12 +9,12 @@ import XCTest
 
 @testable import MuncheeModel
 
+@StateActor
 final class ModelTests: XCTestCase {
     private var model: Model!
 
     override func setUp() {
         super.setUp()
-
         model = Model()
     }
 
@@ -48,5 +48,31 @@ final class ModelTests: XCTestCase {
 
         // And we assume you wanted to keep your items
         XCTAssertEqual(self.model.order!.lines.count, 1)
+    }
+
+    func testReplaceOrderNotSameFromEmpty() {
+        XCTAssertNil(model.order)
+        XCTAssertTrue(model.replaceOrder(whenPreviousRestaurant: nil, wasNotTheSameAs: Mocks.pizzaRestaurant))
+        XCTAssertEqual(model.order?.restaurant, Mocks.pizzaRestaurant)
+        XCTAssertNotNil(model.order)
+    }
+
+    func testReplaceOrderNotSameFromExistingOrder() {
+        XCTAssertNil(model.order)
+        model.select(restaurant: Mocks.pizzaRestaurant)
+        XCTAssertNotNil(model.order)
+        let oldOrder = model.order
+        XCTAssertTrue(model.replaceOrder(whenPreviousRestaurant: Mocks.pizzaRestaurant, wasNotTheSameAs: Mocks.sandwichRestaurant))
+        XCTAssertNotNil(model.order)
+        XCTAssertNotEqual(model.order, oldOrder)
+    }
+
+    func testReplaceOrderNotHappeningBecauseSameRestaurant() {
+        XCTAssertNil(model.order)
+        model.select(restaurant: Mocks.pizzaRestaurant)
+        XCTAssertNotNil(model.order)
+        let oldOrder = model.order
+        XCTAssertFalse(model.replaceOrder(whenPreviousRestaurant: Mocks.pizzaRestaurant, wasNotTheSameAs: Mocks.pizzaRestaurant))
+        XCTAssertEqual(model.order, oldOrder)
     }
 }

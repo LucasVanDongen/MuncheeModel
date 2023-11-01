@@ -1,6 +1,8 @@
 import XCTest
+
 @testable import MuncheeModel
 
+@StateActor
 final class OrderTests: XCTestCase {
     private var order: Order!
 
@@ -11,12 +13,21 @@ final class OrderTests: XCTestCase {
     }
 
     func testAddingProductToOrder() {
+        let exp = expectation(description: "test")
         let expectedAmount = 2
         let expectedProduct = Mocks.hamSandwich
-        XCTAssertTrue(order.add(amount: expectedAmount, of: expectedProduct))
-        XCTAssertEqual(order.lines.count, 1)
-        XCTAssertEqual(order.lines.last?.product, expectedProduct)
-        XCTAssertEqual(order.lines.last?.amount, expectedAmount)
+
+        print("Test body State \(Thread.current)")
+        Task { @StateActor in
+            XCTAssertTrue(order.add(amount: expectedAmount, of: expectedProduct))
+            XCTAssertEqual(order.lines.count, 1)
+            XCTAssertEqual(order.lines.last?.product, expectedProduct)
+            XCTAssertEqual(order.lines.last?.amount, expectedAmount)
+
+            exp.fulfill()
+        }
+
+        wait(for: [exp], timeout: 1)
     }
 
     func testAddingSameProductToOrder() {
@@ -123,12 +134,34 @@ final class OrderTests: XCTestCase {
     }
 
     func testWhenEditingTheOrderBackBelowTheMinimumMinimumOrderMetIsFalseAgain() {
-
         XCTAssertTrue(order.add(amount: 100, of: Mocks.hamSandwich))
         XCTAssertTrue(order.minimumOrderMet)
         XCTAssertTrue(order.update(amount: 1, of: Mocks.hamSandwich))
         XCTAssertEqual(order.lines.first!.amount, 1)
         XCTAssertFalse(order.minimumOrderMet)
+    }
+
+    func testSetPaid() {
+        startPaying()
+        XCTAssertTrue(order.paid())
+    }
+
+    func testFailToSetPaid() {
+        XCTAssertFalse(order.paid(), "You cannot set `.paid` before going into `.paying`")
+    }
+
+    func testOrderEquality() {
+        let otherRestaurantOrder = Order(restaurant: Mocks.pizzaRestaurant)
+        let sameRestaurantOrder = Order(restaurant: Mocks.sandwichRestaurant)
+
+        XCTAssertEqual(order, sameRestaurantOrder)
+        XCTAssertNotEqual(order, otherRestaurantOrder)
+    }
+
+    func testOrderHashability() {
+        var hasher = Hasher()
+        order.hash(into: &hasher)
+        XCTAssertNotEqual(hasher.finalize(), 0)
     }
 
     private func startPaying() {

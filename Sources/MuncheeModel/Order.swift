@@ -11,8 +11,7 @@ import Foundation
 public enum OrderState {
     case open
     case paying
-    case delivering
-    case delivered
+    case paid
 }
 
 public enum AddressState {
@@ -22,7 +21,13 @@ public enum AddressState {
     case confirmed(address: Address)
 }
 
-@Observable public class Order {
+enum DecodeError: Error {
+    case notImplemented
+}
+
+@Observable
+@StateActor
+final public class Order {
     public private(set) var state: OrderState = .open
     public private(set) var lines = [OrderLine]()
     public private(set) var address: AddressState = .none
@@ -52,6 +57,7 @@ public enum AddressState {
         amount: Int,
         of product: Product
     ) -> Bool {
+        print("Test function State \(Thread.current)")
         guard canEditOrder else {
             logger.log(error: "Cannot add orderline when order is not open")
             return false
@@ -142,5 +148,28 @@ public enum AddressState {
         state = .paying
 
         return true
+    }
+
+    @discardableResult
+    public func paid() -> Bool {
+        guard state == .paying else {
+            logger.log(error: "Cannot set order with state `.\(state)` to `.paid`, only `.paying` orders")
+            return false
+        }
+
+        state = .paid
+
+        return true
+    }
+}
+
+extension Order: Hashable {
+    public static func == (lhs: Order, rhs: Order) -> Bool {
+        // Currently we only care if you switched Restaurant
+        return lhs.restaurant.id == rhs.restaurant.id
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(ObjectIdentifier(self))
     }
 }
