@@ -8,7 +8,6 @@
 import Foundation
 
 @Observable
-@StateActor
 final public class OrderLine: Equatable {
     public let product: Product
     public private(set) var amount: Int
@@ -16,6 +15,7 @@ final public class OrderLine: Equatable {
     public var total: Decimal {
         Decimal(amount) * product.price
     }
+
 
     public init(
         product: Product,

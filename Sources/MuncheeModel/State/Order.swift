@@ -26,7 +26,6 @@ enum DecodeError: Error {
 }
 
 @Observable
-@StateActor
 final public class Order {
     public private(set) var state: OrderState = .open
     public private(set) var lines = [OrderLine]()

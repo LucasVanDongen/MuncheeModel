@@ -9,7 +9,6 @@ import Foundation
 import Combine
 
 @Observable
-@StateActor
 final public class Model {
     public private(set) var selectedRestaurant: Restaurant? {
         didSet(previousRestaurant) {

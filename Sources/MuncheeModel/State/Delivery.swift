@@ -9,7 +9,6 @@ import CoreLocation
 import Foundation
 
 @Observable
-@StateActor
 final public class Delivery {
     public enum State: Equatable {
         case waiting
