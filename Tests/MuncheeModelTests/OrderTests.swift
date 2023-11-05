@@ -13,21 +13,13 @@ final class OrderTests: XCTestCase {
     }
 
     func testAddingProductToOrder() {
-        let exp = expectation(description: "test")
         let expectedAmount = 2
         let expectedProduct = Mocks.hamSandwich
 
-        print("Test body State \(Thread.current)")
-        Task { @StateActor in
-            XCTAssertTrue(order.add(amount: expectedAmount, of: expectedProduct))
-            XCTAssertEqual(order.lines.count, 1)
-            XCTAssertEqual(order.lines.last?.product, expectedProduct)
-            XCTAssertEqual(order.lines.last?.amount, expectedAmount)
-
-            exp.fulfill()
-        }
-
-        wait(for: [exp], timeout: 1)
+        XCTAssertTrue(order.add(amount: expectedAmount, of: expectedProduct))
+        XCTAssertEqual(order.lines.count, 1)
+        XCTAssertEqual(order.lines.last?.product, expectedProduct)
+        XCTAssertEqual(order.lines.last?.amount, expectedAmount)
     }
 
     func testAddingSameProductToOrder() {

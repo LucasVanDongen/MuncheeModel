@@ -61,4 +61,5 @@ class Mocks {
         name: "Eggplant Pizza",
         price: 12.75
     )
+    @StateActor static let order = Order(restaurant: pizzaRestaurant)
 }

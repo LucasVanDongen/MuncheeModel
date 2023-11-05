@@ -56,7 +56,6 @@ final public class Order {
         amount: Int,
         of product: Product
     ) -> Bool {
-        print("Test function State \(Thread.current)")
         guard canEditOrder else {
             logger.log(error: "Cannot add orderline when order is not open")
             return false
